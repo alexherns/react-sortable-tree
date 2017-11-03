@@ -42,8 +42,6 @@ class NodeRendererDefault extends Component {
       parentNode, // Needed for dndManager
       ...otherProps
     } = this.props;
-    const nodeTitle = title || node.title;
-    const nodeSubtitle = subtitle || node.subtitle;
 
     let handle;
     if (canDrag) {
@@ -130,53 +128,7 @@ class NodeRendererDefault extends Component {
               }}
             >
               {handle}
-
-              <div
-                className={
-                  styles.rowContents +
-                  (!canDrag ? ` ${styles.rowContentsDragDisabled}` : '')
-                }
-              >
-                <div className={styles.rowLabel}>
-                  <span
-                    className={
-                      styles.rowTitle +
-                      (node.subtitle ? ` ${styles.rowTitleWithSubtitle}` : '')
-                    }
-                  >
-                    {typeof nodeTitle === 'function'
-                      ? nodeTitle({
-                          node,
-                          path,
-                          treeIndex,
-                        })
-                      : nodeTitle}
-                  </span>
-
-                  {nodeSubtitle && (
-                    <span className={styles.rowSubtitle}>
-                      {typeof nodeSubtitle === 'function'
-                        ? nodeSubtitle({
-                            node,
-                            path,
-                            treeIndex,
-                          })
-                        : nodeSubtitle}
-                    </span>
-                  )}
-                </div>
-
-                <div className={styles.rowToolbar}>
-                  {buttons.map((btn, index) => (
-                    <div
-                      key={index} // eslint-disable-line react/no-array-index-key
-                      className={styles.toolbarButton}
-                    >
-                      {btn}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              {children}
             </div>
           )}
         </div>

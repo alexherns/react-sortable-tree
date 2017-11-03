@@ -15,6 +15,7 @@ import withScrolling, {
 import 'react-virtualized/styles.css';
 import TreeNode from './tree-node';
 import NodeRendererDefault from './node-renderer-default';
+import InnerContentRendererDefault from './inner-content-renderer-default';
 import TreePlaceholder from './tree-placeholder';
 import PlaceholderRendererDefault from './placeholder-renderer-default';
 import {
@@ -50,6 +51,7 @@ const mergeTheme = props => {
 
   const overridableDefaults = {
     nodeContentRenderer: NodeRendererDefault,
+    innerContentRenderer: InnerContentRendererDefault,
     placeholderRenderer: PlaceholderRendererDefault,
     rowHeight: 62,
     scaffoldBlockPxWidth: 44,
@@ -78,6 +80,7 @@ class ReactSortableTree extends Component {
     const {
       dndType,
       nodeContentRenderer,
+      innerContentRenderer,
       treeNodeRenderer,
       isVirtualized,
       slideRegionSize,
@@ -461,6 +464,7 @@ class ReactSortableTree extends Component {
       searchFocusOffset,
     } = mergeTheme(this.props);
     const TreeNodeRenderer = this.treeNodeRenderer;
+    const InnerContentRenderer = this.innerContentRenderer;
     const NodeContentRenderer = this.nodeContentRenderer;
     const nodeKey = path[path.length - 1];
     const isSearchMatch = nodeKey in matchKeys;
@@ -508,7 +512,9 @@ class ReactSortableTree extends Component {
           toggleChildrenVisibility={this.toggleChildrenVisibility}
           {...sharedProps}
           {...nodeProps}
-        />
+        >
+          <InnerContentRenderer {...nodeProps, ...sharedProps} canDrag={rowCanDrag} />
+        </NodeContentRenderer>
       </TreeNodeRenderer>
     );
   }
@@ -683,6 +689,11 @@ ReactSortableTree.propTypes = {
   // It is best to copy the component in `node-renderer-default.js` to use as a base, and customize as needed.
   nodeContentRenderer: PropTypes.func,
 
+    // Override the default component for rendering inner nodes (but keep the scaffolding generator)
+  // This is an advanced option for complete customization of the appearance.
+  // It is best to copy the component in `inner-content-renderer-default.js` to use as a base, and customize as needed.
+  innerContentRenderer: PropTypes.func,
+
   // Override the default component for rendering an empty tree
   // This is an advanced option for complete customization of the appearance.
   // It is best to copy the component in `placeholder-renderer-default.js` to use as a base,
@@ -698,6 +709,7 @@ ReactSortableTree.propTypes = {
     rowHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
     treeNodeRenderer: PropTypes.func,
     nodeContentRenderer: PropTypes.func,
+    innerContentRenderer: PropTypes.func,
     placeholderRenderer: PropTypes.func,
   }),
 
@@ -745,6 +757,7 @@ ReactSortableTree.defaultProps = {
   maxDepth: null,
   treeNodeRenderer: null,
   nodeContentRenderer: null,
+  innerContentRenderer: null,
   onMoveNode: () => {},
   onVisibilityToggle: () => {},
   placeholderRenderer: null,
